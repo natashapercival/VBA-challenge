@@ -1,0 +1,120 @@
+Sub Calculate_Stock_Stats():
+
+
+'variable to track ticker
+Dim ticker_value As String
+
+'variable to track amt. of tickers per worksheets
+Dim ticker_name As Integer
+
+'varibale to track last row in worksheets
+Dim lastrow As Long
+
+'variable to track open price
+Dim open_price As Double
+
+'variable to track close price
+Dim close_price As Double
+
+'vairable to track yearly change
+Dim yearly_change As Double
+
+'variable to track total stock volume
+Dim percent_change As Double
+  
+'variable to track total stock volume
+Dim volume As Double
+
+' loop through worksheets to add Headings J thru L
+
+  'For Each ws In Worksheets
+    For Each ws In ThisWorkbook.Sheets
+    
+  ' Make the worksheet active.
+    ws.Activate
+     
+  ' Find the last row of each worksheet
+    lastrow = ws.Cells(Rows.Count, "A").End(xlUp).Row
+     
+    ws.Cells(1, 9) = "Ticker"
+    ws.Cells(1, 10) = "Yearly Change"
+    ws.Cells(1, 11) = "Percent Change"
+    ws.Cells(1, 12) = "Total Stock Value"
+    
+    Debug.Print ws.Name
+
+   
+    ' Initialize variables for each worksheet
+    ticker_value = 0
+    ticker = ""
+    yearly_change = 0
+    opening_price = 0
+    percent_change = 0
+    volume_amt = 0
+    
+    ' loop through tickers column
+    For i = 2 To lastrow
+
+        ticker = Cells(i, 1).Value
+        
+        If opening_price = 0 Then
+            opening_price = Cells(i, 3).Value
+            
+        End If
+        
+        ' volume_amt added for ticker.
+        volume_amt = volume_amt + Cells(i, 7).Value
+        
+        If Cells(i + 1, 1).Value <> ticker Then
+            ticker_value = ticker_value + 1
+            Cells(ticker_value + 1, 9) = ticker
+            
+            
+            closing_price = Cells(i, 6)
+            
+                        yearly_change = closing_price - opening_price
+            
+                        Cells(ticker_value + 1, 10).Value = yearly_change
+            
+            ' If yearly change value > 0, green cell
+               If yearly_change > 0 Then
+                Cells(ticker_value + 1, 10).Interior.ColorIndex = 4
+            ' If yearly change value < 0, red cell.
+                ElseIf yearly_change < 0 Then
+                   Cells(ticker_value + 1, 10).Interior.ColorIndex = 3
+            
+            End If
+            
+            
+            ' Percent change value for ticker.
+            If opening_price = 0 Then
+                percent_change = 0
+            Else
+                percent_change = (yearly_change / opening_price)
+            End If
+            
+            
+            ' Convert percent_change value as a percent.
+            Cells(ticker_value + 1, 11).Value = Format(percent_change, "Percent")
+                        opening_price = 0
+            
+                        Cells(ticker_value + 1, 12).Value = volume_amt
+                        
+                         volume_amt = 0
+        End If
+        
+    Next i
+    
+       
+    lastrow = ws.Cells(Rows.Count, "I").End(xlUp).Row
+         
+    For i = 2 To lastrow
+    
+                
+    Next i
+    
+        
+Next ws
+
+End Sub
+  
